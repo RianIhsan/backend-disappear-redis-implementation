@@ -1,10 +1,11 @@
 package handler
 
 import (
+	"net/http"
+
 	user "github.com/capstone-kelompok-7/backend-disappear/module/entities"
 	"github.com/capstone-kelompok-7/backend-disappear/module/feature/auth"
 	dto2 "github.com/capstone-kelompok-7/backend-disappear/module/feature/auth/dto"
-	"net/http"
 
 	"github.com/capstone-kelompok-7/backend-disappear/module/feature/users"
 	"github.com/capstone-kelompok-7/backend-disappear/utils"
@@ -38,7 +39,7 @@ func (h *AuthHandler) Register() echo.HandlerFunc {
 			return response.SendErrorResponse(c, http.StatusBadRequest, "Validasi gagal: "+err.Error())
 		}
 
-		existingUser, err := h.userService.GetUsersByEmail(registerRequest.Email)
+		existingUser, _ := h.userService.GetUsersByEmail(registerRequest.Email)
 		if existingUser != nil {
 			return response.SendErrorResponse(c, http.StatusConflict, "Email sudah terdaftar")
 		}
@@ -48,7 +49,7 @@ func (h *AuthHandler) Register() echo.HandlerFunc {
 			Password: registerRequest.Password,
 		}
 
-		_, err = h.service.Register(newUser)
+		_, err := h.service.Register(newUser)
 		if err != nil {
 			return response.SendErrorResponse(c, http.StatusInternalServerError, "Kesalahan Server Internal: "+err.Error())
 		}
